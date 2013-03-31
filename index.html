@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="initial-scale=1.0, contact-scalable=no" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+        <title>
+        </title>
+        <link rel="stylesheet" href="jquery.mobile-1.2.0.min.css" />
+        <link rel="stylesheet" href="app.css" />
+        <script src="jquery-1.7.2.min.js">
+        </script>
+        <script src="jquery.mobile-1.2.0.min.js">
+        </script>
+        <script src="app.js">
+        </script>
+		<script>
+			$(document).ready(function () {
+				initialize();
+			});
+		</script>
+    </head>
+    <body>
+        <!-- Home -->
+        <div data-role="page" id="mainPage">
+            <div data-theme="b" data-role="header">
+                <h3>Contact List</h3>
+            </div>
+            <div data-role="content">
+                <ul id="contactList" data-role="listview" data-divider-theme="b" data-inset="true">
+                    <li data-role="list-divider" role="heading">Contacts</li>
+                </ul>
+                <a data-role="button" href="#addContactPage" data-transition="flow">Add contact</a>
+            </div>
+        </div>
+		
+        <div data-role="page" id="addContactPage">
+            <div data-theme="b" data-role="header">
+                <h3>Add contact</h3>
+            </div>
+            <div data-role="content">
+                <div data-role="fieldcontain">
+                    <fieldset data-role="controlgroup">
+                        <label for="addContactName">Name</label>
+						<input type="text" name="" id="addContactName" value=""/>
+                    </fieldset>
+                </div>
+                <div data-role="fieldcontain">
+                    <fieldset data-role="controlgroup">
+                        <label for="addContactPhone">Phone</label>
+						<input type="text" name="" id="addContactPhone" value=""/>
+                    </fieldset>
+                </div>
+                <input type="submit" value="Add" onclick="addContact();" />
+                <a data-role="button" data-rel="back" data-transition="flow">Cancel</a>
+            </div>
+        </div>
+		
+        <div data-role="page" id="editContactPage">
+            <div data-theme="b" data-role="header">
+                <h3>Edit contact</h3>
+            </div>
+            <div data-role="content">
+				<input type=hidden id="editContactID" value="-1">
+                <div data-role="fieldcontain">
+                    <fieldset data-role="controlgroup">
+                        <label for="editContactName">Name</label>
+						<input type="text" name="" id="editContactName" value=""/>
+                    </fieldset>
+                </div>
+                <div data-role="fieldcontain">
+                    <fieldset data-role="controlgroup">
+                        <label for="editContactPhone">Phone</label>
+						<input type="text" name="" id="editContactPhone" value=""/>
+                    </fieldset>
+                </div>
+                <input type="submit" value="Update" onclick="updateContact();" />
+                <a data-role="button" href="javascript:deleteContact();">Delete</a>
+                <a data-role="button" data-rel="back" data-transition="flow">Cancel</a>
+            </div>
+        </div>
+    </body>
+</html>
