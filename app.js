@@ -60,7 +60,7 @@ function addContactToList(contact) {
 
 server = {};
 
-server.url = "server/contact.js";
+server.url = "http://192.168.1.100/DojoTest/server/contact.js";
 
 server.initialize = function(callback) {
 	this.invokeJsonRpc("initialize", null, callback);
