@@ -1,13 +1,36 @@
-function initialize() {
-	server.initialize(function(contacts) {
+function checkLogin() {
+	serverIsLoggedIn(function(loggedIn) {
+		if (loggedIn)
+			showList();
+		else
+			$.mobile.changePage("#loginPage", {transition: 'flow'});
+	});
+}
+
+function login() {
+	serverLogin($('#userName').val(), $('#password').val(), function(success) {
+		if (success)
+			showList();
+	});
+}
+
+function handleError(error) {
+	alert("Server error:\n" + error.message);
+}
+
+function showList() {
+	console.log("Initializing");
+	serverGetAllContacts(function(contacts) {
 		for (var i=0; i<contacts.length; i++)
 			addContactToList(contacts[i]);
-		$('#contactList').listview('refresh');
+		$.mobile.changePage("#mainPage", {transition: 'flow'});
+		var list = $('#contactList');
+		list.listview('refresh');
 	});
 }
 
 function showContact(id) {
-	server.getContactDetails(id, function(contactDetails) {
+	serverGetContactDetails(id, function(contactDetails) {
 		$('#editContactID').val(contactDetails.id);
 		$('#editContactName').val(contactDetails.name);
 		$('#editContactPhone').val(contactDetails.phone);
@@ -18,20 +41,20 @@ function showContact(id) {
 function addContact() {
 	var name = $('#addContactName').val();
 	var phone = $('#addContactPhone').val();
-	server.addContact(name, phone, function(contactDetails) {
+	serverAddContact(name, phone, function(contactDetails) {
 		addContactToList(contactDetails);
 		$('#contactList').listview('refresh');
 		$('#addContactName').val("");
 		$('#addContactPhone').val("");
 		$.mobile.back();
-	});
+	}, handleError);
 }
 
 function updateContact() {
 	var id = $('#editContactID').val();
 	var name = $('#editContactName').val();
 	var phone = $('#editContactPhone').val();
-	server.updateContact(id, name, phone, function(contactDetails) {
+	serverUpdateContact(id, name, phone, function(contactDetails) {
 		$('#contactListLink'+contactDetails.id).text(contactDetails.name);
 		$.mobile.back();
 	});
@@ -39,7 +62,7 @@ function updateContact() {
 
 function deleteContact() {
 	var id = $('#editContactID').val();
-	server.deleteContact(id, function() {
+	serverDeleteContact(id, function() {
 		$('#contactListItem'+id).remove();
 		$.mobile.back();
 	});
@@ -54,60 +77,4 @@ function addContactToList(contact) {
 				.text(contact.name)
 			)
 		);
-}
-
-// Server proxy -----------------------------------------------
-
-server = {};
-
-server.url = "http://192.168.1.100/DojoTest/server/contact.js";
-
-server.initialize = function(callback) {
-	this.invokeJsonRpc("initialize", null, callback);
-}
-
-server.getContactList = function(callback) {
-	this.invokeJsonRpc("getContactList", null, callback);
-}
-
-server.addContact = function(name, phone, callback) {
-	this.invokeJsonRpc("addContact", [ name, phone], callback);
-}
-
-server.getContactDetails = function(id, callback) {
-	this.invokeJsonRpc("getContactDetails", [ id ], callback);
-}
-
-server.updateContact = function(id, name, phone, callback) {
-	this.invokeJsonRpc("updateContact", [ id, name, phone], callback);
-}
-
-server.deleteContact = function(id, callback) {
-	this.invokeJsonRpc("deleteContact", [ id ], callback);
-}
-
-server.handleError = function(error) {
-	alert("Server error:\n" + error.message);
-}
-
-server.invokeJsonRpc = function(method, params, callback) {
-	var request = {};
-	request.method = method;
-	request.params = params;
-	request.id = 1;
-	request.jsonrpc = "1.1";
-
-	$.ajax({
-		type: "POST",
-		url: this.url,
-		data: JSON.stringify(request),
-		success: function(data) {
-			returnValue = JSON.parse(data);
-			if (returnValue.error)
-				this.handleError(returnValue.error);
-			else if (callback)
-				callback(returnValue.result);
-		},
-		contentType: "application/json"
-	});
 }
