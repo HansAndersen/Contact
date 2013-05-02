@@ -9,9 +9,16 @@ function checkLogin() {
 
 function login() {
 	serverLogin($('#userName').val(), $('#password').val(), function(success) {
-		if (success)
-			showList();
-	});
+			if (success)
+				showList();
+			else
+				$("#loginError").text("Incorrect user-name or password.");
+		}, function(err) {
+			if (err.message != undefined)
+				$("#loginError").text(err.message);
+			else
+				$("#loginError").text(err);
+		});
 }
 
 function handleError(error) {
